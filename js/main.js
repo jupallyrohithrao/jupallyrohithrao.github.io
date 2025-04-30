@@ -10,9 +10,9 @@ module.exports = async function (context, req) {
     const feedback = req.body.feedback;
 
     // Configuration for Table Storage connection
-    const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME; // Table Storage account name
-    const accountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY;   // Table Storage account key
-    const tableName = process.env.AZURE_TABLE_NAME;            // Your Table name
+    const accountName = process.portfoliowebsiteform12; // Table Storage account name
+    const accountKey = process.325h1m0GtS98SKvRcyT+9jQMEZfkF2BmVb7Q7PrreMBfnPqq+gnaE4B3BA8RhtY5c5MppTGKTv7W+ASta6z17g==;   // Table Storage account key
+    const tableName = process.form;            // Your Table name
 
     // Create a credential for connecting to the Table Storage
     const credential = new AzureNamedKeyCredential(accountName, accountKey);
