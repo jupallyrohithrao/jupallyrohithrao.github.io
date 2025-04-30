@@ -2,6 +2,50 @@
  	duration: 800,
  	easing: 'slide'
  });
+const { TableClient, AzureNamedKeyCredential } = require("@azure/data-tables"); // Import Azure Table Storage SDK
+
+module.exports = async function (context, req) {
+    // Collect the data from the form submission
+    const name = req.body.name;
+    const feedback = req.body.feedback;
+
+    // Configuration for Table Storage connection
+    const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME; // Table Storage account name
+    const accountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY;   // Table Storage account key
+    const tableName = process.env.AZURE_TABLE_NAME;            // Your Table name
+
+    // Create a credential for connecting to the Table Storage
+    const credential = new AzureNamedKeyCredential(accountName, accountKey);
+    
+    // Create a TableClient instance
+    const tableClient = new TableClient(`https://${accountName}.table.core.windows.net`, tableName, credential);
+
+    // Create an entity (feedback entry) to insert
+    const feedbackEntity = {
+        partitionKey: "feedback", // Partition key for grouping data (you can choose any)
+        rowKey: `${Date.now()}`, // Unique row key based on current timestamp
+        name: name,              // Submitted name
+        feedbackText: feedback,  // Submitted feedback
+        submittedAt: new Date().toISOString() // Date of submission
+    };
+
+    try {
+        // Insert the entity into the table
+        await tableClient.createEntity(feedbackEntity);
+        
+        // Return success message
+        context.res = {
+            status: 200,
+            body: "Thank you for your feedback!"
+        };
+    } catch (err) {
+        // Return error message
+        context.res = {
+            status: 500,
+            body: `Error inserting feedback into table: ${err.message}`
+        };
+    }
+};
 
 (function($) {
 
