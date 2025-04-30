@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
 	<title>Jupally Rohith Rao Portfolio</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -31,6 +32,7 @@
 	<!-- Devicon CDN -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
 
+	<script src="https://cdn.jsdelivr.net/npm/@azure/data-tables@12.1.0-beta.1/dist/azure-data-tables.min.js"></script>
 
 
 	<style>
@@ -668,7 +670,63 @@
 									class="btn btn-primary py-3 px-5" target="_blank">Click
 									Here</a> </h2>
 						</div>
+						  
 					</div>
+					<form id="feedbackForm">
+						<h3>Feedback Form</h3>
+						<label for="name">Name:</label>
+						<input type="text" id="name" required><br>
+						<label for="email">Email:</label>
+						<input type="email" id="email" required><br>
+						<label for="feedback">Feedback:</label>
+						<textarea id="feedback" required></textarea><br>
+						<button type="submit">Submit</button>
+					  </form>
+					  
+					  <p id="responseMessage"></p>
+					  
+					  <script>
+						const form = document.getElementById("feedbackForm");
+						const responseMessage = document.getElementById("responseMessage");
+					  
+						const account = "<portfoliowebsiteform12>";
+						const tableName = "form";
+						const accountKey = "<325h1m0GtS98SKvRcyT+9jQMEZfkF2BmVb7Q7PrreMBfnPqq+gnaE4B3BA8RhtY5c5MppTGKTv7W+ASta6z17g==>";
+					  
+						form.addEventListener("submit", async (e) => {
+						  e.preventDefault();
+						  const data = {
+							name: document.getElementById("name").value,
+							email: document.getElementById("email").value,
+							feedback: document.getElementById("feedback").value
+						  };
+					  
+						  const { TableClient, AzureNamedKeyCredential } = window["@azure/data-tables"];
+						  const credential = new AzureNamedKeyCredential(account, accountKey);
+						  const client = new TableClient(
+							`https://${account}.table.core.windows.net`,
+							tableName,
+							credential
+						  );
+					  
+						  const entity = {
+							partitionKey: "feedback",
+							rowKey: new Date().getTime().toString(),
+							name: data.name,
+							email: data.email,
+							feedback: data.feedback,
+						  };
+					  
+						  try {
+							await client.createEntity(entity);
+							responseMessage.innerText = "Thanks for your feedback!";
+							form.reset();
+						  } catch (err) {
+							responseMessage.innerText = "Error: " + err.message;
+						  }
+						});
+					  </script>
+					
 					<br>
 					<ul class="ftco-footer-social list-unstyled d-flex justify-content-center align-items-center mb-0">
 						<li class="ftco-animate normal-txt">Find me on </li>
